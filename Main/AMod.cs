@@ -770,6 +770,22 @@ namespace AMod
                     ["PT"] = 0
                 });
             }
+
+            if (Globals.solvingSteps != null && Globals.solvingSteps.Count > 0)
+            {
+                for (int l = 0; l < 1; l++)
+                {
+                    int num3 = Globals.solvingSteps[0];
+                    Globals.solvingSteps.RemoveAt(0);
+                    Globals.CustomPacket = "{ \"ID\": \"MGA\", \"MGT\": 1, \"MGD\": " + num3 + "}";
+                    AMod.SendCustomPacket();
+                }
+                if (Globals.solvingSteps.Count == 0 && Globals.solvingFossils)
+                {
+                    AMod.StartAutoSolveFossil();
+                }
+            }
+
             if (Globals.BytesBuyer)
             {
                 for (int i = 0; i < Globals.Speed; i++)
@@ -2976,6 +2992,20 @@ namespace AMod
                         Globals.AudioManager.PlaySFX(AudioManager.SoundType.ButtonClick);
                         tab = Tab.SpamSettingsPacket;
                     }
+
+
+                    if (GUI.Button(new Rect(15, 295, 120, 25), "Auto XP " + (Globals.solvingFossils ? "(ON)" : "(OFF)")))
+                    {
+                        Globals.solvingFossils = !Globals.solvingFossils;
+                        if (Globals.solvingFossils)
+                        {
+                            StartAutoSolveFossil();
+                        }
+                        else
+                        {
+                            StopAutoSolveFossil();
+                        }
+                    }
                     break;
                 case Tab.SpamSettingsPacket:
 
@@ -4224,6 +4254,29 @@ namespace AMod
             if (statusGUI)
             {
                 WindowSize3 = GUI.Window(1515, WindowSize3, (GUI.WindowFunction)DrawMenu3, "Status Tool");
+            }
+        }
+
+        private static void StartAutoSolveFossil()
+        {
+            if (!Globals.solvingFossils)
+            {
+                return;
+            }
+            if (!Globals.OutgoingBlock.Contains("MGSp"))
+            {
+                Globals.OutgoingBlock.Add("MGSp");
+            }
+            Globals.CustomPacket = "{\"ID\" : \"MGSt\", \"MGT\" : 1, \"IK\" : 117441649}";
+            AMod.SendCustomPacket();
+        }
+
+        // Token: 0x06000267 RID: 615 RVA: 0x00002C4C File Offset: 0x00000E4C
+        private static void StopAutoSolveFossil()
+        {
+            if (Globals.OutgoingBlock.Contains("MGSp"))
+            {
+                Globals.OutgoingBlock.Remove("MGSp");
             }
         }
     }

@@ -1097,5 +1097,8 @@ namespace AMod
         public static bool Bbreak = false;
         public static string BFValue = "";
         public static bool BFarmer = false;
+        internal static bool solvingFossils = false;
+        // Token: 0x0400025B RID: 603
+        public static System.Collections.Generic.List<int> solvingSteps;
     }
 }
