@@ -254,6 +254,8 @@ namespace AMod
         private float cnvT = 0f;
         private float vendTime = 0f;
         private float CollectTime = 0f;
+        private float LastPickupTime = 0f;
+        private float PickupInterval = 30;
         public override void OnUpdate()
         {
             if (Input.GetKeyDown(KeyCode.F7))
@@ -770,6 +772,41 @@ namespace AMod
                     ["PT"] = 0
                 });
             }
+
+            if (Globals.solvingSteps != null && Globals.solvingSteps.Count > 0)
+            {
+                for (int l = 0; l < Math.Min(Globals.Speed, Globals.solvingSteps.Count); l++)
+                {
+                    int num3 = Globals.solvingSteps[0];
+                    Globals.solvingSteps.RemoveAt(0);
+                    Globals.CustomPacket = "{ \"ID\": \"MGA\", \"MGT\": 1, \"MGD\": " + num3 + "}";
+                    AMod.SendCustomPacket();
+                }
+                if (Globals.solvingSteps.Count == 0 && Globals.solvingFossils)
+                {
+                    AMod.StartAutoSolveFossil();
+                }
+            }
+
+            if (Globals.autoPickup)
+            {
+                LastPickupTime += Time.deltaTime;
+                if (LastPickupTime >= PickupInterval)
+                {
+                    LastPickupTime = 0f;
+                    foreach (CollectableData CD in Globals.world.collectables)
+                    {
+                        if (CD.mapPoint == Globals.CurrentMapPoint && CD.amount > 900 && 
+                            (int)InventoryKey.IntToInventoryKey((int) CD.blockType).blockType == 
+                            (int)World.BlockType.FossilPuzzle)
+                        {
+                            OutgoingMessages.SendCollectCollectableMessage(CD.id);
+                            break;
+                        }
+                    } 
+                }
+            }
+            
             if (Globals.BytesBuyer)
             {
                 for (int i = 0; i < Globals.Speed; i++)
@@ -2265,8 +2302,8 @@ namespace AMod
 
                     Globals.CTimer = GUI.HorizontalSlider(new Rect(15, 245, 100, 20), Globals.CTimer, 0.05f, 1f);
 
-                    int roundedValueCSpeed = (int)Globals.Speed;
-
+                    int roundedValueCSpeed = (int)Globals.CTimer;
+                    
                     GUI.Label(new Rect(15f, 215f, 2000000000000f, 33f), "Collect Time: Every " + string.Format("[{0}]" + " seconds.", roundedValueCSpeed));
 
                     Globals.collectAll = GUI.Toggle(new Rect(15, 285, 100, 20), Globals.collectAll, "Giveaway Mode");
@@ -2302,6 +2339,7 @@ namespace AMod
                         Globals.AudioManager.PlaySFX(AudioManager.SoundType.ButtonClick);
                         tab = Tab.MyTab;
                     }
+                    Globals.autoPickup= GUI.Toggle(new Rect(255, 205, 90, 25), Globals.autoPickup, "Auto Pickup");
 
                     /*
                     if (GUI.Button(new Rect(255, 85, 135, 25), "RBT"))
@@ -2975,6 +3013,20 @@ namespace AMod
                     {
                         Globals.AudioManager.PlaySFX(AudioManager.SoundType.ButtonClick);
                         tab = Tab.SpamSettingsPacket;
+                    }
+
+
+                    if (GUI.Button(new Rect(15, 295, 120, 25), "Auto XP " + (Globals.solvingFossils ? "(ON)" : "(OFF)")))
+                    {
+                        Globals.solvingFossils = !Globals.solvingFossils;
+                        if (Globals.solvingFossils)
+                        {
+                            StartAutoSolveFossil();
+                        }
+                        else
+                        {
+                            StopAutoSolveFossil();
+                        }
                     }
                     break;
                 case Tab.SpamSettingsPacket:
@@ -4224,6 +4276,29 @@ namespace AMod
             if (statusGUI)
             {
                 WindowSize3 = GUI.Window(1515, WindowSize3, (GUI.WindowFunction)DrawMenu3, "Status Tool");
+            }
+        }
+
+        private static void StartAutoSolveFossil()
+        {
+            if (!Globals.solvingFossils)
+            {
+                return;
+            }
+            if (!Globals.OutgoingBlock.Contains("MGSp"))
+            {
+                Globals.OutgoingBlock.Add("MGSp");
+            }
+            Globals.CustomPacket = "{\"ID\" : \"MGSt\", \"MGT\" : 1, \"IK\" : 117441649}";
+            AMod.SendCustomPacket();
+        }
+
+        // Token: 0x06000267 RID: 615 RVA: 0x00002C4C File Offset: 0x00000E4C
+        private static void StopAutoSolveFossil()
+        {
+            if (Globals.OutgoingBlock.Contains("MGSp"))
+            {
+                Globals.OutgoingBlock.Remove("MGSp");
             }
         }
     }

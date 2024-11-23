@@ -11,6 +11,7 @@ using Il2Cpp;
 using Il2CppBasicTypes;
 using UnityEngine;
 using Il2CppBasicTypes;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 
 namespace AMod
 {
@@ -112,5 +113,31 @@ namespace AMod
             }
             return sb.ToString();
         }
+        public static int[] GetTilesFromGameSlots(Il2CppReferenceArray<ArchaeologyGameUI.GameSlot> arr)
+        {
+            int[] array = new int[arr.Length];
+            for (int i = 0; i < arr.Length; i++)
+            {
+                array[i] = arr[i].placeInGrid;
+            }
+            return array;
+        }
+
+        /// <summary>
+        /// Maps the given array of tile indices to their positions.
+        /// </summary>
+        /// <param name="array">An array of tile indices.</param>
+        /// <returns>An array where each index represents the position of the tile in the original array.</returns>
+        public static int[] MapTilesToPositions(int[] array)
+        {
+            int[] array2 = new int[array.Length];
+            for (int i = 0; i < array.Length; i++)
+            {
+                int num = array[i];
+                array2[num] = i;
+            }
+            return array2;
+        }
+
     }
 }

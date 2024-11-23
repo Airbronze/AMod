@@ -22,6 +22,7 @@ using Mono.CSharp;
 using UnityEngine;
 using static Il2Cpp.PlayerData;
 using static Il2Cpp.World;
+using static UnityEngine.UIElements.UIRAtlasAllocator;
 
 namespace AMod
 {
@@ -45,6 +46,7 @@ namespace AMod
                 if (Arguments[0] == "/help") // CommandHELPList // DLL Ver mentioned 3
                 {
                     ChatUI.SendMinigameMessage("AMod v2.2 <BR Credits to Jepe, Nekto, JED5729, Kelasponssaa , Zeppelin, Krak, Shiuki<BR ==========<BR How To Use:<BR /command Arguements..<BR To view command info type /command ?<BR ==========<BR AMod Commands List<BR ==========<BR /credits, /help, /ahelp, /keys, /love, /pet1, /pet2, /sleep, /wake. /quit, /pwe, /support, /gbt, /rsc, /ait, /rit, /uait, /urit, /sbt, /cdata, /ref, /aref, /drop, /dall, /d1, /dupe, /cdupe, /poblock, /piblock, /iclear, /oclear, /eject, /set, /craft<BR ==========");
+
                 }
                 if (Arguments[0] == "/ahelp") // CommandHELPList 2 // DLL Ver mentioned 4
                 {
@@ -167,9 +169,56 @@ namespace AMod
                     ChatUtils.D("Success");
                 }
 
+                if (Arguments[0] == "/ritl")
+                {
+                    int counter = 0; // Declare and initialize the integer
+                    counter++;  // Increment the integer by 1
+
+                    PlayerData.InventoryKey currentSelection5 = Globals.gameplayUI.inventoryControl.GetCurrentSelection();
+                    World.BlockType blockType = Globals.world.GetBlockType(Globals.Player.currentPlayerMapPoint);
+                    WorldItemBase worldItemData2 = Globals.world.GetWorldItemData(Globals.Player.currentPlayerMapPoint);
+                    bool flag19 = worldItemData2 != null && ConfigData.IsBlockStorage(blockType);
+                    BSONObject asBSON5 = worldItemData2.GetAsBSON();
+                    Il2CppSystem.Collections.Generic.List<int> int32ListValue = asBSON5["storageItemsAsInventoryKeys"].int32ListValue;
+                    Il2CppSystem.Collections.Generic.List<int> int32ListValue2 = asBSON5["storageItemsAmounts"].int32ListValue;
+                    int32ListValue.RemoveAt(int32ListValue.Count - 1);
+                    int32ListValue2.RemoveAt(int32ListValue.Count - 1);
+
+                    asBSON5["storageItemsAsInventoryKeys"] = int32ListValue;
+                    asBSON5["storageItemsAmounts"] = int32ListValue2;
+                    asBSON5["blockType"] = (int)blockType;
+                    asBSON5["class"] = blockType.ToString() + "Data";
+                    BSONObject bsonobject = new BSONObject();
+                    bsonobject["ID"] = "ASI";
+                    bsonobject["WiB"] = asBSON5;
+                    bsonobject["x"] = Globals.Player.currentPlayerMapPoint.x;
+                    bsonobject["y"] = Globals.Player.currentPlayerMapPoint.y;
+                    bsonobject["PT"] = 1;
+                    System.Console.WriteLine("from ritl:");
+                    OutgoingMessages.AddOneMessageToList(bsonobject);
+                    
+                    OutgoingMessages.AddOneMessageToList(new BSONObject()
+                    {
+                        ["ID"] = "AGI",
+                        ["PT"] = 0
+                    });
+                    ChatUtils.D("Success");
+                }
+
 
                 if (Arguments[0] == "/uait")
                 {
+                    // conditonally parse arguments[1] to int and fallback to 1 as default
+                    int amount = 0;
+                    if (Arguments.Length > 1)
+                    {
+                        amount = int.TryParse(Arguments[1], out amount) ? amount : 1;
+                    }
+                    else
+                    {
+                        amount = 1;
+                    }
+
                     int counter = 0; // Declare and initialize the integer
                     counter++;  // Increment the integer by 1
                     PlayerData.InventoryKey currentSelection5 = Globals.gameplayUI.inventoryControl.GetCurrentSelection();
@@ -180,7 +229,7 @@ namespace AMod
                     Il2CppSystem.Collections.Generic.List<int> int32ListValue = asBSON5["storageItemsAsInventoryKeys"].int32ListValue;
                     Il2CppSystem.Collections.Generic.List<int> int32ListValue2 = asBSON5["storageItemsAmounts"].int32ListValue;
                     int SIK = (int)PlayerData.InventoryKey.InventoryKeyToInt(currentSelection5);
-                    int GC = 1;
+                    int GC = amount;
                     int32ListValue.Add(SIK);
                     int32ListValue2.Add(GC);
 

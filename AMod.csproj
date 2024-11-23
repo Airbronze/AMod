@@ -50,6 +50,10 @@
     <Compile Include="Main\Pathfind\pfresults.cs" />
     <Compile Include="Main\Pathfind\pnode.cs" />
     <Compile Include="Main\Utils.cs" />
+    <Compile Include="PuzzleNS\Node.cs" />
+    <Compile Include="PuzzleNS\PriorityQueue.cs" />
+    <Compile Include="PuzzleNS\Puzzle.cs" />
+    <Compile Include="PuzzleNS\PuzzleSolver.cs" />
     <Compile Include="RPC\Discord.cs" />
     <Compile Include="RPC\DiscordRPC Converters\EnumSnakeCaseConverter.cs" />
     <Compile Include="RPC\DiscordRPC Converters\EnumValueAttribute.cs" />
@@ -662,4 +666,8 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy /y "$(TargetDir)AMod.dll" "D:\SteamLibrary\steamapps\common\Pixel Worlds\Mods"
+</PostBuildEvent>
+  </PropertyGroup>
 </Project>

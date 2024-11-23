@@ -28,6 +28,8 @@ using Il2CppAmazon.Runtime;
 using MelonLoader.TinyJSON;
 using UnityEngine.TextCore;
 using UnityEngine;
+using AMod.PuzzleNS;
+using System.Timers;
 
 namespace AMod
 {
@@ -422,6 +424,23 @@ namespace AMod
 
                     BSONValue IncomingPacket = messages["m" + i.ToString()];
                     string IncomingPacketID = IncomingPacket["ID"].stringValue;
+                    if (Globals.solvingFossils && IncomingPacketID == "MGSt")
+                    {
+                        Il2CppSystem.Collections.Generic.List<int> int32ListValue = IncomingPacket["MGD"].int32ListValue;
+                        if (int32ListValue != null)
+                        {
+                            List<int> list = new List<int>();
+                            for (int j = 0; j < int32ListValue.Count - 1; j++)
+                            {
+                                list.Add(int32ListValue[j]);
+                            }
+                            int[] array = list.ToArray();
+                            Puzzle startPuzzle = new Puzzle(array);
+                            PuzzleSolver puzzleSolver = new PuzzleSolver();
+                            List<Puzzle> boards = puzzleSolver.SolvePuzzle(startPuzzle);
+                            Globals.solvingSteps = puzzleSolver.FindMoves(boards);
+                        }
+                    }
                     bool nigg = Globals.IncomingBlock.Contains(IncomingPacketID);
 
                     if (Globals.IncomingBlock.Contains(IncomingPacketID))
