@@ -666,4 +666,8 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy /y "$(TargetDir)AMod.dll" "D:\SteamLibrary\steamapps\common\Pixel Worlds\Mods"
+</PostBuildEvent>
+  </PropertyGroup>
 </Project>

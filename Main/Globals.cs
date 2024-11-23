@@ -418,6 +418,7 @@ namespace AMod
             {"rsc", "Reset your clipboard."},
             {"ait", "Add an item inside a regular chest you are standing on. Buggy command."},
             {"rit", "Remove an item from a chest. Best to use if you have an untradable stuck inside chest. Stand on chest to use."},
+            {"ritl", "Removes the last item from a chest. Best to use if you have an untradable stuck inside chest. Stand on chest to use."},
             {"uait", "Select an untradable item in your inventory, stand on a swapped BT chest, and type /uait to add the item inside."},
             {"urit", "Originally planned to remove untradeables from chest, but pretty buggy and useless."},
             {"sbt", "Swap BlockType of a chest, from normal to untradable chest, or the other way around. \r\n WARNING: If you leave the world with the chest as untradable, you will lose the items inside!"},
@@ -553,7 +554,7 @@ namespace AMod
         public static bool PickyTrasher = false;
         public static bool seeFwk = false;
         public static bool Fwker = false;
-        public static bool IRef = false;
+        public static bool IRef = true;
         public static string TWorld;
         public static string NameVis;
         public static float Speed = 1f;
@@ -1100,5 +1101,6 @@ namespace AMod
         internal static bool solvingFossils = false;
         // Token: 0x0400025B RID: 603
         public static System.Collections.Generic.List<int> solvingSteps;
+        internal static bool autoPickup;
     }
 }
