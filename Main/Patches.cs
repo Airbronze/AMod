@@ -490,14 +490,16 @@ namespace AMod
                             }
                         }
                     }
-                    if (IncomingPacketID == "Recall")
+                    /*if (IncomingPacketID == "Recall")
                     {
                         if (IncomingPacket["RecallBT"].int32Value == 4367)
                         {
                             OutgoingMessages.SendWearableOrWeaponUndress(World.BlockType.MountFlyingBathtub);
                             Globals.Player.UndressWearableOrWeaponRemote(World.BlockType.MountFlyingBathtub);
                         }
-                    }
+                    }*/
+
+// removed ts so developers arent lazy to make anticheat lol
 
                     if (Globals.NiceTry && IncomingPacketID == "Fwk")
                     {
